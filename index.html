@@ -77,11 +77,78 @@
       padding: 40px 24px 80px;
     }
 
+    .filter-container {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .filter-btn {
+      padding: 10px 24px;
+      border: 2px solid var(--text);
+      background: transparent;
+      color: var(--text);
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      background: var(--text);
+      color: var(--card);
+    }
+
+    .filter-btn.active {
+      background: var(--text);
+      color: var(--card);
+    }
+
+    .pagination-container {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .pagination-btn {
+      padding: 10px 16px;
+      border: 2px solid var(--text);
+      background: transparent;
+      color: var(--text);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--text);
+      color: var(--card);
+    }
+
+    .pagination-btn.active {
+      background: var(--text);
+      color: var(--card);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     /* FORCE 2 PER ROW (desktop) */
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 36px;
+    }
+
+    .card.hidden {
+      display: none;
     }
 
     @media (max-width: 700px) {
@@ -340,7 +407,7 @@
 <body>
 
 <header>
-  <h1>Belabiju</h1>
+  <h1>Bela Biju</h1>
   <p>Bijuterias artesanais</p>
 
   <div class="social">
@@ -354,10 +421,17 @@
 </header>
 
 <main>
+  <div class="filter-container">
+    <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
+    <button class="filter-btn" onclick="filterProducts('ceramica')">Cerâmica</button>
+    <button class="filter-btn" onclick="filterProducts('resina')">Resina</button>
+    <button class="filter-btn" onclick="filterProducts('novos')">Novos</button>
+  </div>
+
   <div class="grid">
 
     <!-- PRODUCT 1 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-001')">
         <img src="images/BLB-001-A.jpeg" alt="Colar BLB-001">
       </div>
@@ -377,7 +451,7 @@
     </div>
 
     <!-- PRODUCT 2 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-002')">
         <img src="images/BLB-002-A.jpeg" alt="Colar BLB-002">
       </div>
@@ -396,7 +470,7 @@
     </div>
 
     <!-- PRODUCT 3 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-003')">
         <img src="images/BLB-003-A.jpeg" alt="Colar BLB-003">
       </div>
@@ -415,7 +489,7 @@
     </div>
 
     <!-- PRODUCT 4 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-004')">
         <img src="images/BLB-004-A.jpeg" alt="Colar BLB-004">
       </div>
@@ -434,7 +508,7 @@
     </div>
 
     <!-- PRODUCT 5 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-005')">
         <img src="images/BLB-005-A.jpeg" alt="Colar BLB-005">
       </div>
@@ -453,7 +527,7 @@
     </div>
 
     <!-- PRODUCT 6 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-006')">
         <img src="images/BLB-006-A.jpeg" alt="Colar BLB-006">
       </div>
@@ -473,7 +547,7 @@
     </div>
 
     <!-- PRODUCT 7 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-007')">
         <img src="images/BLB-007-A.jpeg" alt="Colar BLB-007">
       </div>
@@ -491,7 +565,7 @@
     </div>
 
     <!-- PRODUCT 8 -->
-    <div class="card">
+    <div class="card" data-category="resina">
       <div style="cursor: pointer;" onclick="openModal('BLB-008')">
         <img src="images/BLB-008-A.jpeg" alt="Colar BLB-008">
       </div>
@@ -508,7 +582,7 @@
     </div>
 
     <!-- PRODUCT 9 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-009')">
         <img src="images/BLB-009-A.jpeg" alt="Colar BLB-009">
       </div>
@@ -526,7 +600,7 @@
     </div>
 
     <!-- PRODUCT 10 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-010')">
         <img src="images/BLB-010-A.jpeg" alt="Colar BLB-010">
       </div>
@@ -544,7 +618,7 @@
     </div>
 
     <!-- PRODUCT 11 -->
-    <div class="card">
+    <div class="card" data-category="resina">
       <div style="cursor: pointer;" onclick="openModal('BLB-011')">
         <img src="images/BLB-011-A.jpeg" alt="Colar BLB-011">
       </div>
@@ -562,7 +636,7 @@
     </div>
 
     <!-- PRODUCT 12 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-012')">
         <img src="images/BLB-012-A.jpeg" alt="Colar BLB-012">
       </div>
@@ -575,7 +649,7 @@
     </div>
 
     <!-- PRODUCT 13 -->
-    <div class="card">
+    <div class="card" data-category="resina">
       <div style="cursor: pointer;" onclick="openModal('BLB-013')">
         <img src="images/BLB-013-A.jpeg" alt="Colar BLB-013">
       </div>
@@ -588,7 +662,7 @@
     </div>
 
     <!-- PRODUCT 14 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-014')">
         <img src="images/BLB-014-A.jpeg" alt="Colar BLB-014">
       </div>
@@ -601,7 +675,7 @@
     </div>
 
     <!-- PRODUCT 15 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-015')">
         <img src="images/BLB-015-A.jpeg" alt="Colar BLB-015">
       </div>
@@ -614,7 +688,7 @@
     </div>
 
     <!-- PRODUCT 16 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-016')">
         <img src="images/BLB-016-A.jpeg" alt="Colar BLB-016">
       </div>
@@ -627,7 +701,7 @@
     </div>
 
     <!-- PRODUCT 17 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-017')">
         <img src="images/BLB-017-A.jpeg" alt="Colar BLB-017">
       </div>
@@ -640,7 +714,7 @@
     </div>
 
     <!-- PRODUCT 18 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-018')">
         <img src="images/BLB-018-A.jpeg" alt="Colar BLB-018">
       </div>
@@ -653,7 +727,7 @@
     </div>
 
     <!-- PRODUCT 19 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-019')">
         <img src="images/BLB-019-A.jpeg" alt="Colar BLB-019">
       </div>
@@ -666,7 +740,7 @@
     </div>
 
     <!-- PRODUCT 20 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-020')">
         <img src="images/BLB-020-A.jpeg" alt="Colar BLB-020">
       </div>
@@ -679,7 +753,7 @@
     </div>
 
     <!-- PRODUCT 21 -->
-    <div class="card">
+    <div class="card" data-category="resina">
       <div style="cursor: pointer;" onclick="openModal('BLB-021')">
         <img src="images/BLB-021-A.jpeg" alt="Colar BLB-021">
       </div>
@@ -692,7 +766,7 @@
     </div>
 
     <!-- PRODUCT 22 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-022')">
         <img src="images/BLB-022-A.jpeg" alt="Colar BLB-022">
       </div>
@@ -705,7 +779,7 @@
     </div>
 
     <!-- PRODUCT 23 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-023')">
         <img src="images/BLB-023-A.jpeg" alt="Colar BLB-023">
       </div>
@@ -718,7 +792,7 @@
     </div>
 
     <!-- PRODUCT 24 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-024')">
         <img src="images/BLB-024-A.jpeg" alt="Colar BLB-024">
       </div>
@@ -731,7 +805,7 @@
     </div>
 
     <!-- PRODUCT 25 -->
-    <div class="card">
+    <div class="card" data-category="ceramica">
       <div style="cursor: pointer;" onclick="openModal('BLB-025')">
         <img src="images/BLB-025-A.jpeg" alt="Colar BLB-025">
       </div>
@@ -743,11 +817,130 @@
       </div>
     </div>
 
+    <!-- PRODUCT 26 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-026')">
+        <img src="images/BLB-026-A.jpeg" alt="Colar BLB-026">
+      </div>
+      <div class="code">Código BLB-026</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PRODUCT 27 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-027')">
+        <img src="images/BLB-027-A.jpeg" alt="Colar BLB-027">
+      </div>
+      <div class="code">Código BLB-027</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PRODUCT 28 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-028')">
+        <img src="images/BLB-028-A.jpeg" alt="Colar BLB-028">
+      </div>
+      <div class="code">Código BLB-028</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PRODUCT 29 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-029')">
+        <img src="images/BLB-029-A.jpeg" alt="Colar BLB-029">
+      </div>
+      <div class="code">Código BLB-029</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PRODUCT 30 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-030')">
+        <img src="images/BLB-030-A.jpeg" alt="Colar BLB-030">
+      </div>
+      <div class="code">Código BLB-030</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PRODUCT 31 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-031')">
+        <img src="images/BLB-031-A.jpeg" alt="Colar BLB-031">
+      </div>
+      <div class="code">Código BLB-031</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PRODUCT 32 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-032')">
+        <img src="images/BLB-032-A.jpeg" alt="Colar BLB-032">
+      </div>
+      <div class="code">Código BLB-032</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PRODUCT 33 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-033')">
+        <img src="images/BLB-033-A.jpeg" alt="Colar BLB-033">
+      </div>
+      <div class="code">Código BLB-033</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- PRODUCT 34 -->
+    <div class="card" data-category="novos">
+      <div style="cursor: pointer;" onclick="openModal('BLB-034')">
+        <img src="images/BLB-034-A.jpeg" alt="Colar BLB-034">
+      </div>
+      <div class="code">Código BLB-034</div>
+      <div class="price">R$ </div>
+      <div class="desc"></div>
+      <div class="buy">
+        <a href="https://wa.me/5534992569311">Pergunte no WhatsApp</a>
+      </div>
+    </div>
+
   </div>
+
+  <div class="pagination-container" id="paginationContainer"></div>
 </main>
 
 <footer>
-  © Belabiju — All rights reserved
+  © Bela Biju — All rights reserved
 </footer>
 
 <!-- MODAL -->
@@ -931,7 +1124,62 @@
       price: 'R$ 62,00',
       desc: 'Este é um colar que marca presença.<br/>Colar com cordão de seda preto, conta em resina e pingente em cerâmica esmaltada em alta temperatura nas cores azul e vermelha.<br/>Medidas:<br/>Colar: 42 cm<br/>Pingente: 6 cm de diâmetro',
       whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-026': {
+      code: 'Código BLB-026',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-027': {
+      code: 'Código BLB-027',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-028': {
+      code: 'Código BLB-028',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-029': {
+      code: 'Código BLB-029',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-030': {
+      code: 'Código BLB-030',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-031': {
+      code: 'Código BLB-031',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-032': {
+      code: 'Código BLB-032',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-033': {
+      code: 'Código BLB-033',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
+    },
+    'BLB-034': {
+      code: 'Código BLB-034',
+      price: '',
+      desc: '',
+      whatsapp: 'https://wa.me/5534992569311'
     }
+
   };
 
   let currentProduct = null;
@@ -1041,7 +1289,7 @@
 
   // Close modal when clicking outside
   document.getElementById('productModal').addEventListener('click', function(e) {
-    if (e.target === this) {
+    if (!e.target.closest('.modal-body')) {
       closeModal();
     }
   });
@@ -1054,6 +1302,103 @@
       if (e.key === 'ArrowRight') nextImage();
     }
   });
+
+  // Filter functionality
+  let currentPage = 1;
+  const itemsPerPage = 10;
+
+  function filterProducts(category) {
+    const cards = document.querySelectorAll('.card');
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    // Update button states
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Filter cards
+    cards.forEach(card => {
+      if (category === 'all') {
+        card.classList.remove('hidden');
+      } else {
+        const cardCategory = card.getAttribute('data-category');
+        if (cardCategory === category) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      }
+    });
+
+    // Reset pagination
+    currentPage = 1;
+    updatePagination();
+  }
+
+  function updatePagination() {
+    const cards = document.querySelectorAll('.card:not(.hidden)');
+    const totalPages = Math.ceil(cards.length / itemsPerPage);
+    const paginationContainer = document.getElementById('paginationContainer');
+
+    // Show/hide cards based on current page
+    cards.forEach((card, index) => {
+      const pageNumber = Math.floor(index / itemsPerPage) + 1;
+      if (pageNumber === currentPage) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // Create pagination buttons
+    paginationContainer.innerHTML = '';
+
+    if (totalPages <= 1) return; // No pagination needed
+
+    // Previous button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'pagination-btn';
+    prevBtn.textContent = '← Anterior';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updatePagination();
+        window.scrollTo(0, 0);
+      }
+    };
+    paginationContainer.appendChild(prevBtn);
+
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'pagination-btn';
+      btn.textContent = i;
+      if (i === currentPage) btn.classList.add('active');
+      btn.onclick = () => {
+        currentPage = i;
+        updatePagination();
+        window.scrollTo(0, 0);
+      };
+      paginationContainer.appendChild(btn);
+    }
+
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'pagination-btn';
+    nextBtn.textContent = 'Próximo →';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updatePagination();
+        window.scrollTo(0, 0);
+      }
+    };
+    paginationContainer.appendChild(nextBtn);
+  }
+
+  // Initialize pagination on page load
+  updatePagination();
 </script>
 
 </body>
