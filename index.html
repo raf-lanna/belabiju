@@ -2,14 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000">
   <title>Bela Biju</title>
-  <link rel="icon" type="image/svg+xml" href="images/bela_biju_logo.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="images/bela_biju_logo-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="images/bela_biju_logo-16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="images/bela_biju_logo-180.png">
-
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-bb-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-bb-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/favicon-bb-180.png">
 
   <!-- Icons -->
   <link
@@ -166,6 +164,12 @@
       color: var(--muted);
       letter-spacing: 0.08em;
       text-transform: uppercase;
+    }
+
+    /* Mobile adjustments: reduce header padding and increase tap targets */
+    @media (max-width:700px) {
+      header { padding: 18px 12px 8px; }
+      .filter-btn, .pagination-btn { min-height: 44px; padding: 12px 20px; font-size: 1rem; }
     }
 
     /* Modal (full-screen) styles */
@@ -585,33 +589,7 @@
     <button id="open-modal-btn" class="btn-ghost" aria-controls="modal-sobre-nos">Sobre nós</button>
   </div>
 </header>
-  <!-- Drawer overlay + aside for 'Sobre nós' -->
-  <div class="drawer-overlay" id="drawer-overlay"></div>
-  <aside id="drawer-sobre-nos" class="drawer" aria-hidden="true">
-    <button class="drawer-close" aria-label="Fechar">×</button>
-    <div class="drawer-inner">
-      <h2>Sobre nós</h2>
-      <p>Bem-vinda à Bela Biju!</p>
-
-      <p>A Bela Biju é o resultado do encontro de três amigas e três talentos que se complementam através da arte e artesanato. Unimos nossas diferentes visões e habilidades para dar vida a peças que contam histórias e que carregam um pouco da nossa dedicação e alegria que sentimos em trabalhar juntas.</p>
-
-      <p><strong>Três Olhares, Uma Paixão</strong></p>
-
-      <p>Nossa marca ganha vida através das mãos de quem entende e ama o fazer artesanal: Maria Ignez Sampaio, artista plástica, pintora e ceramista; Maria Nilce Penna, artesã do macramê; e Gláucia Lanna, artesã e ceramista.</p>
-
-      <p><strong>Feito à mão, por nós, para você</strong></p>
-
-      <p>Cada peça da Bela Biju é pensada, moldada e finalizada manualmente por nós três. Mais do que criar acessórios, nós unimos nossas trajetórias para dar forma a peças autorais que carregam alma, propósito e o toque único do feito à mão. Acreditamos que o acessório certo tem o poder de iluminar o rosto e elevar a autoestima, transformando um look básico em algo extraordinário.</p>
-
-      <ul class="about-values">
-        <li>Feito à mão</li>
-        <li>Materiais selecionados</li>
-        <li>Peças autorais</li>
-      </ul>
-
-      <a class="btn-cta" href="https://wa.me/5534992569311">Fale conosco</a>
-    </div>
-  </aside>
+  <!-- Drawer removed (using modal alternative) -->
 
   <!-- Full-screen modal alternative for 'Sobre nós' -->
   <div id="modal-sobre-nos" class="modal-full" role="dialog" aria-modal="false" aria-hidden="true">
@@ -1297,98 +1275,14 @@
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
 })();
 
-// Accessible Drawer (Sobre nós) toggle + focus trap
-(function(){
-  const hamburger = document.getElementById('hamburger');
-  const drawer = document.getElementById('drawer-sobre-nos');
-  const overlay = document.getElementById('drawer-overlay');
-  const closeBtn = drawer && drawer.querySelector('.drawer-close');
-  const mainEl = document.querySelector('main');
-  let lastFocused = null;
-
-  function setInert(state){
-    // mark main content inert/hidden to assistive tech and prevent tabbing
-    if(mainEl){
-      if(state){
-        mainEl.setAttribute('aria-hidden','true');
-        document.body.style.overflow = 'hidden';
-      } else {
-        mainEl.removeAttribute('aria-hidden');
-        document.body.style.overflow = '';
-      }
-    }
-  }
-
-  function getFocusable(container){
-    if(!container) return [];
-    return Array.from(container.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
-      .filter(el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true');
-  }
-
-  function trapFocus(e){
-    if(!drawer.classList.contains('active')) return;
-    const focusable = getFocusable(drawer);
-    if(focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length -1];
-
-    if(e.key === 'Tab'){
-      if(e.shiftKey){
-        if(document.activeElement === first){ e.preventDefault(); last.focus(); }
-      } else {
-        if(document.activeElement === last){ e.preventDefault(); first.focus(); }
-      }
-    }
-  }
-
-  function openDrawer(){
-    lastFocused = document.activeElement;
-    drawer.classList.add('active');
-    overlay.classList.add('active');
-    drawer.setAttribute('aria-hidden','false');
-    drawer.setAttribute('role','dialog');
-    drawer.setAttribute('aria-modal','true');
-    if(hamburger) hamburger.setAttribute('aria-expanded','true');
-    setInert(true);
-    // focus first focusable inside drawer
-    const focusable = getFocusable(drawer);
-    (focusable[0] || closeBtn).focus();
-    document.addEventListener('focus', maintainFocus, true);
-    document.addEventListener('keydown', trapFocus);
-  }
-
-  function closeDrawer(){
-    drawer.classList.remove('active');
-    overlay.classList.remove('active');
-    drawer.setAttribute('aria-hidden','true');
-    drawer.removeAttribute('aria-modal');
-    drawer.removeAttribute('role');
-    if(hamburger) hamburger.setAttribute('aria-expanded','false');
-    setInert(false);
-    document.removeEventListener('focus', maintainFocus, true);
-    document.removeEventListener('keydown', trapFocus);
-    // restore focus
-    try{ lastFocused && lastFocused.focus(); }catch(e){}
-  }
-
-  function maintainFocus(e){
-    if(!drawer.classList.contains('active')) return;
-    if(drawer.contains(e.target)) return;
-    e.stopPropagation();
-    const focusable = getFocusable(drawer);
-    (focusable[0] || closeBtn).focus();
-  }
-
-  // init handlers
-  hamburger && hamburger.addEventListener('click', function(){
-    const open = drawer.classList.contains('active');
-    open ? closeDrawer() : openDrawer();
-  });
-
-  overlay && overlay.addEventListener('click', closeDrawer);
-  closeBtn && closeBtn.addEventListener('click', closeDrawer);
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeDrawer(); });
-})();
+// Lazy-load images where not explicitly declared
+document.addEventListener('DOMContentLoaded', function(){
+  try{
+    document.querySelectorAll('img').forEach(img => {
+      if(!img.hasAttribute('loading')) img.setAttribute('loading','lazy');
+    });
+  }catch(e){}
+});
   const products = {
     'BLB-001': {
       code: 'Código BLB-001',
