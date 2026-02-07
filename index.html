@@ -9,6 +9,9 @@
   <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-bb-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="images/favicon-bb-180.png">
 
+  <!-- Netlify Identity for CMS -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
   <!-- Icons -->
   <link
     rel="stylesheet"
@@ -1164,6 +1167,60 @@
   <div class="pagination-container" id="paginationContainer"></div>
 </main>
   <script>
+    // Load products from JSON file
+    let allProducts = [];
+    fetch('_data/products.json')
+      .then(res => res.json())
+      .then(data => {
+        allProducts = data;
+        populateProductsGrid();
+      })
+      .catch(err => console.error('Erro ao carregar produtos:', err));
+
+    function populateProductsGrid(){
+      const grid = document.querySelector('.grid');
+      grid.innerHTML = '';
+      
+      allProducts.forEach(product => {
+        const card = document.createElement('div');
+        card.className = `card ${product.category ? 'hidden' : ''}`;
+        card.setAttribute('data-category', product.category || 'ceramica');
+        
+        card.innerHTML = `
+          <div style="cursor: pointer;" onclick="openModalFromData('${product.code}')">
+            <img src="images/${product.code}-A.jpeg" alt="Colar ${product.code}" loading="lazy">
+          </div>
+          <div class="code">Código ${product.code}</div>
+          <div class="price">${product.price}</div>
+          <div class="desc">${product.desc}</div>
+          <div class="buy">
+            <a href="${product.whatsapp}" target="_blank">Pergunte no WhatsApp</a>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      
+      currentPage = 1;
+      filterProducts('all');
+    }
+
+    function openModalFromData(productCode){
+      const product = allProducts.find(p => p.code === productCode);
+      if(!product) return;
+      
+      currentProduct = productCode;
+      currentImageIndex = 0;
+      isZoomed = false;
+
+      document.getElementById('modalCode').textContent = `Código ${product.code}`;
+      document.getElementById('modalPrice').textContent = product.price;
+      document.getElementById('modalDesc').innerHTML = product.desc;
+      document.getElementById('modalWhatsApp').href = product.whatsapp;
+
+      loadCarouselImages(productCode);
+      document.getElementById('productModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
 
     // Sobre nós modal already exists with id modal-sobre-nos
     const sobreModal = document.getElementById('modal-sobre-nos');
