@@ -54,6 +54,7 @@
       max-width: 45%;
       height: auto;
     }
+
     /* Sobre nós section */
     .about {
       background: var(--card);
@@ -115,48 +116,7 @@
     }
     /* Drawer styles */
 
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.25s ease, visibility 0.25s ease;
-      z-index: 1100;
-    }
 
-    .drawer-overlay.active { opacity: 1; visibility: visible; }
-
-    .drawer {
-      position: fixed;
-      top: 0;
-      right: -420px;
-      width: 380px;
-      max-width: 92%;
-      height: 100vh;
-      background: var(--card);
-      box-shadow: -12px 0 24px rgba(0,0,0,0.12);
-      transition: right 0.28s cubic-bezier(.2,.9,.2,1);
-      z-index: 1150;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .drawer.active { right: 0; }
-
-    .drawer-close {
-      background: none;
-      border: none;
-      font-size: 1.6rem;
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      cursor: pointer;
-    }
-
-    .drawer-inner { padding-top: 34px; }
-
-    @media (max-width:700px) { .drawer { width: 100%; right: -100%; } .drawer.active { right: 0; } }
 
     header p {
       margin-top: 8px;
@@ -584,11 +544,33 @@
       <i class="fa-brands fa-instagram"></i>
     </a>
   </div>
-  <div>
+  
+  <div style="display:flex;gap:12px;justify-content:center;">
     <button id="open-modal-btn" class="btn-ghost" aria-controls="modal-sobre-nos">Sobre nós</button>
+    <button id="open-frete-btn" class="btn-ghost" aria-controls="modal-frete">Frete</button>
   </div>
 </header>
-  <!-- Drawer removed (using modal alternative) -->
+
+  <!-- Frete modal (Uber deliveries) -->
+  <div id="modal-frete" class="modal-full" role="dialog" aria-modal="false" aria-hidden="true">
+    <div class="modal-body-full" role="document">
+      <button class="modal-close-full" aria-label="Fechar">×</button>
+      <h2>Calculador de frete (estimativa - moto)</h2>
+
+      <label for="frete-dest">Endereço de destino</label>
+      <input id="frete-dest" type="text" placeholder="Rua, número, bairro, cidade" style="width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:8px;" />
+
+      <div style="display:flex;gap:12px;margin-top:12px;align-items:center;">
+        <button id="calc-frete-btn" class="btn-cta">Calcular frete</button>
+        <button id="open-uber-btn" class="btn-ghost" disabled style="opacity:0.6;">Abrir no Uber</button>
+        <button class="btn-ghost modal-close-full">Fechar</button>
+      </div>
+
+      <div id="frete-result" style="margin-top:18px;font-size:0.95rem;color:var(--text);"></div>
+      <p style="margin-top:12px;font-size:0.85rem;color:var(--muted)">Estimativa aproximada — o valor real no app do Uber pode variar.</p>
+    </div>
+  </div>
+
 
   <!-- Full-screen modal alternative for 'Sobre nós' -->
   <div id="modal-sobre-nos" class="modal-full" role="dialog" aria-modal="false" aria-hidden="true">
@@ -1181,6 +1163,106 @@
 
   <div class="pagination-container" id="paginationContainer"></div>
 </main>
+  <script>
+
+    // Sobre nós modal already exists with id modal-sobre-nos
+    const sobreModal = document.getElementById('modal-sobre-nos');
+    const sobreOpenBtn = document.getElementById('open-modal-btn');
+    if(sobreOpenBtn){
+      sobreOpenBtn.addEventListener('click', ()=>{ openSobreNos(); });
+    }
+    // functions to open/close the Sobre Nós modal (used by drawer link)
+    function openSobreNos(){ if(sobreModal){ sobreModal.classList.add('active'); sobreModal.setAttribute('aria-hidden','false'); } }
+    function closeSobreNos(){ if(sobreModal){ sobreModal.classList.remove('active'); sobreModal.setAttribute('aria-hidden','true'); } }
+    const sobreClose = sobreModal && sobreModal.querySelector('.modal-close-full');
+    if(sobreClose) sobreClose.addEventListener('click', closeSobreNos);
+
+    // Frete modal
+    const freteModal = document.getElementById('modal-frete');
+    const freteOpenBtn = document.getElementById('open-frete-btn');
+    function openFrete(){ if(freteModal){ freteModal.classList.add('active'); freteModal.setAttribute('aria-hidden','false'); } }
+    function closeFrete(){ if(freteModal){ freteModal.classList.remove('active'); freteModal.setAttribute('aria-hidden','true'); } }
+    if(freteOpenBtn) freteOpenBtn.addEventListener('click', openFrete);
+    document.querySelectorAll('#modal-frete .modal-close-full').forEach(b=>b.addEventListener('click', closeFrete));
+
+    // Frete calculator: geocode addresses (Nominatim), compute haversine distance, estimate price
+    const originAddress = 'Rua da Carioca 508 ap. 601 CEP 38411046 Patrimônio';
+    let originCoords = null;
+
+    async function geocode(address){
+      const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address);
+      try{
+        const res = await fetch(url, {headers:{'Accept':'application/json'}});
+        const data = await res.json();
+        if(data && data.length) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display_name: data[0].display_name };
+        throw new Error('Não encontrado');
+      }catch(e){ throw e; }
+    }
+
+    function toRad(v){ return v * Math.PI / 180; }
+    function haversine(lat1, lon1, lat2, lon2){
+      const R = 6371; // km
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    const calcBtn = document.getElementById('calc-frete-btn');
+    const openUberBtn = document.getElementById('open-uber-btn');
+    const freteResult = document.getElementById('frete-result');
+
+    // Pre-geocode origin once
+    (async ()=>{
+      try{ originCoords = await geocode(originAddress); }catch(e){ originCoords = null; }
+    })();
+
+    calcBtn.addEventListener('click', async ()=>{
+      const destInput = document.getElementById('frete-dest');
+      const dest = destInput.value.trim();
+      if(!dest){ alert('Por favor, informe o endereço de destino.'); destInput.focus(); return; }
+      freteResult.textContent = 'Calculando...';
+      calcBtn.disabled = true;
+      try{
+        const destCoords = await geocode(dest);
+        if(!originCoords) originCoords = await geocode(originAddress);
+        if(!originCoords){ throw new Error('Falha ao localizar origem.'); }
+        const distanceKm = haversine(originCoords.lat, originCoords.lon, destCoords.lat, destCoords.lon);
+        const distance = Math.max(0.1, distanceKm); // avoid zero
+        // estimation formula (example): base + per_km * distance
+        const base = 6.00;
+        const perKm = 2.50; // adjust as desired
+        const estimate = base + perKm * distance;
+        const etaMinutes = Math.max(5, Math.round((distance / 25) * 60)); // assume 25km/h avg in city
+
+        freteResult.innerHTML = `<strong>Distância:</strong> ${distance.toFixed(2)} km<br/>
+          <strong>Tempo estimado:</strong> ~${etaMinutes} min<br/>
+          <strong>Estimativa de frete:</strong> R$ ${estimate.toFixed(2)}<br/>
+          <div style="margin-top:8px;color:var(--muted);font-size:0.9rem">Base R$${base.toFixed(2)} + R$${perKm.toFixed(2)}/km</div>`;
+
+        // enable open-uber button and store coordinates in dataset for deep link
+        openUberBtn.disabled = false;
+        openUberBtn.style.opacity = '1';
+        openUberBtn.dataset.dest = destCoords.lat + ',' + destCoords.lon;
+        openUberBtn.dataset.destAddress = destCoords.display_name || dest;
+      }catch(err){
+        freteResult.innerHTML = '<span style="color:crimson">Erro ao calcular: ' + (err.message||err) + '</span>';
+      }finally{ calcBtn.disabled = false; }
+    });
+
+    // Open Uber deep link using formatted addresses when available
+    openUberBtn.addEventListener('click', ()=>{
+      const destAddress = openUberBtn.dataset.destAddress || document.getElementById('frete-dest').value.trim();
+      const pickup = originAddress;
+      const base = 'https://m.uber.com/ul/?action=setPickup';
+      const params = new URLSearchParams();
+      params.set('pickup[formatted_address]', pickup);
+      params.set('dropoff[formatted_address]', destAddress);
+      const url = base + '&' + params.toString();
+      window.open(url, '_blank');
+    });
+  </script>
 
 <footer>
   © Bela Biju — All rights reserved
@@ -1216,7 +1298,6 @@
   </div>
 </div>
 
-<script>
 // Accessible full-screen modal for 'Sobre nós'
 (function(){
   const openBtn = document.getElementById('open-modal-btn');
@@ -1275,13 +1356,20 @@
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
 })();
 
-// Lazy-load images where not explicitly declared
-document.addEventListener('DOMContentLoaded', function(){
-  try{
-    document.querySelectorAll('img').forEach(img => {
-      if(!img.hasAttribute('loading')) img.setAttribute('loading','lazy');
-    });
-  }catch(e){}
+// Frete modal from header button
+const freteOpenBtn = document.getElementById('open-frete-btn');
+const freteModal = document.getElementById('modal-frete');
+if(freteOpenBtn && freteModal){
+  freteOpenBtn.addEventListener('click', ()=>{
+    freteModal.classList.add('active');
+    freteModal.setAttribute('aria-hidden','false');
+  });
+}
+document.querySelectorAll('#modal-frete .modal-close-full').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    freteModal.classList.remove('active');
+    freteModal.setAttribute('aria-hidden','true');
+  });
 });
   const products = {
     'BLB-001': {
