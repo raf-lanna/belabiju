@@ -566,7 +566,6 @@
       <div style="display:flex;gap:12px;margin-top:12px;align-items:center;">
         <button id="calc-frete-btn" class="btn-cta">Calcular frete</button>
         <button id="open-uber-btn" class="btn-ghost" disabled style="opacity:0.6;">Abrir no Uber</button>
-        <button class="btn-ghost modal-close-full">Fechar</button>
       </div>
 
       <div id="frete-result" style="margin-top:18px;font-size:0.95rem;color:var(--text);"></div>
@@ -1629,18 +1628,16 @@ document.querySelectorAll('#modal-frete .modal-close-full').forEach(b=>{
   });
 
   function updatePagination() {
-    const cards = document.querySelectorAll('.card:not(.hidden)');
-    const totalPages = Math.ceil(cards.length / itemsPerPage);
-    const paginationContainer = document.getElementById('paginationContainer');
+    // Limpar display inline de todos os cards para evitar estado antigo ao trocar filtro
+    document.querySelectorAll('.card').forEach(function(card) { card.style.display = ''; });
+    var cards = document.querySelectorAll('.card:not(.hidden)');
+    var totalPages = Math.ceil(cards.length / itemsPerPage);
+    var paginationContainer = document.getElementById('paginationContainer');
 
-    // Show/hide cards based on current page
-    cards.forEach((card, index) => {
-      const pageNumber = Math.floor(index / itemsPerPage) + 1;
-      if (pageNumber === currentPage) {
-        card.style.display = '';
-      } else {
-        card.style.display = 'none';
-      }
+    // Mostrar só os da página atual; esconder os demais (visíveis pelo filtro)
+    cards.forEach(function(card, index) {
+      var pageNumber = Math.floor(index / itemsPerPage) + 1;
+      card.style.display = pageNumber === currentPage ? '' : 'none';
     });
 
     // Create pagination buttons
@@ -1694,61 +1691,7 @@ document.querySelectorAll('#modal-frete .modal-close-full').forEach(b=>{
   // Initialize pagination on page load
   updatePagination();
 
-// Load products from JSON file
-    let allProducts = [];
-    fetch('_data/products.json')
-      .then(res => res.json())
-      .then(data => {
-        allProducts = data;
-        populateProductsGrid();
-      })
-      .catch(err => console.error('Erro ao carregar produtos:', err));
-
-    function populateProductsGrid(){
-      const grid = document.querySelector('.grid');
-      grid.innerHTML = '';
-
-      allProducts.forEach(product => {
-        const card = document.createElement('div');
-        card.className = `card ${product.category ? 'hidden' : ''}`;
-        card.setAttribute('data-category', product.category || 'ceramica');
-
-        card.innerHTML = `
-          <div style="cursor: pointer;" onclick="openModalFromData('${product.code}')">
-            <img src="images/${product.code}-A.jpeg" alt="Colar ${product.code}" loading="lazy">
-          </div>
-          <div class="code">Código ${product.code}</div>
-          <div class="price">${product.price}</div>
-          <div class="desc">${product.desc}</div>
-          <div class="buy">
-            <a href="${product.whatsapp}" target="_blank">Pergunte no WhatsApp</a>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-
-      currentPage = 1;
-      filterProducts('all');
-    }
-
-    function openModalFromData(productCode){
-      const product = allProducts.find(p => p.code === productCode);
-      if(!product) return;
-
-      currentProduct = productCode;
-      currentImageIndex = 0;
-      isZoomed = false;
-
-      document.getElementById('modalCode').textContent = `Código ${product.code}`;
-      document.getElementById('modalPrice').textContent = product.price;
-      document.getElementById('modalDesc').innerHTML = product.desc;
-      document.getElementById('modalWhatsApp').href = product.whatsapp;
-
-      loadCarouselImages(productCode);
-      document.getElementById('productModal').classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
+// Grade usa sempre o HTML estático (34 produtos) — filtros e paginação funcionam sobre ela
     // Sobre nós modal already exists with id modal-sobre-nos
     const sobreModal = document.getElementById('modal-sobre-nos');
     const sobreOpenBtn = document.getElementById('open-modal-btn');
