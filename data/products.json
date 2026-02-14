@@ -1,4 +1,5 @@
-[
+{
+  "products": [
   {
     "code": "BLB-001",
     "price": "R$ 90,00",
@@ -52,6 +53,27 @@
     "code": "BLB-008",
     "price": "R$ 45,00",
     "desc": "Colar com técnica de macramê ideal para o dia a dia. Colar de corda náutica de 8 mm na cor azul royal com nó floral",
+    "category": "resina",
+    "whatsapp": "https://wa.me/5534992569311"
+  },
+  {
+    "code": "BLB-009",
+    "price": "R$ 75,00",
+    "desc": "Peça moderna, exclusiva e versátil. Colar com cordão de camurça marrom, conta de resina e pingente de cerâmica esmaltada em alta temperatura na cor mel.<br/>Medidas:<br/> Colar: comprimento ajustável até 41 cm<br/>Pingente: diâmetro de 5 cm.",
+    "category": "resina",
+    "whatsapp": "https://wa.me/5534992569311"
+  },
+  {
+    "code": "BLB-010",
+    "price": "R$ 75,00",
+    "desc": "Peça com design exclusivo. Colar com cordão de camurça marrom ajustável, conta de resina e pingente de cerâmica esmaltada em alta temperatura na cor mel.<br/>Medidas:<br/>Colar: comprimento ajustável até 46 cm<br/>Pingente: 4,5 x 5,0 cm.",
+    "category": "resina",
+    "whatsapp": "https://wa.me/5534992569311"
+  },
+  {
+    "code": "BLB-011",
+    "price": "R$ 42,00",
+    "desc": "Esta peça combina com o verão. Colar com corda náutica verde musgo, conta e pingente de resina na cor verde e nó 8 de macramê.<br/>Medidas:<br/>Colar: 47 cm<br/>Pingente: 4 x 6 cm.",
     "category": "resina",
     "whatsapp": "https://wa.me/5534992569311"
   },
@@ -153,4 +175,5 @@
     "category": "ceramica",
     "whatsapp": "https://wa.me/5534992569311"
   }
-]
+  ]
+}

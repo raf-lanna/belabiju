@@ -1,26 +1,24 @@
 backend:
-  name: github
-  repo: raf-lanna/belabiju
-  branch: master
-  auth_endpoint: api/auth
-  base_url: https://belabiju.netlify.app
+  name: git-gateway
+  branch: main
 
 media_folder: "images"
-public_folder: "/images"
+public_folder: "images"
 
 collections:
-  - name: "products"
-    label: "Produtos"
-    folder: "_data"
-    create: false
-    format: "json"
-    extension: "json"
-    identifier_field: "code"
-    fields:
-      - { label: "Código", name: "code", widget: "string", pattern: ["^BLB-[0-9]{3}$", "Formato: BLB-001"] }
-      - { label: "Preço", name: "price", widget: "string", pattern: ["^R\\$ [0-9]+,[0-9]{2}$", "Formato: R$ 90,00"] }
-      - { label: "Descrição", name: "desc", widget: "text" }
-      - { label: "Categoria", name: "category", widget: "select", options: ["ceramica", "resina"] }
-      - { label: "Imagem A", name: "imageA", widget: "image", required: false }
-      - { label: "Imagem B", name: "imageB", widget: "image", required: false }
-      - { label: "Link WhatsApp", name: "whatsapp", widget: "string", default: "https://wa.me/5534992569311" }
+  - name: "data"
+    label: "Dados"
+    files:
+      - name: "products"
+        label: "Produtos"
+        file: "data/products.json"
+        fields:
+          - name: "products"
+            label: "Lista de Produtos"
+            widget: "list"
+            fields:
+              - {label: "Código", name: "code", widget: "string"}
+              - {label: "Preço", name: "price", widget: "string", required: false}
+              - {label: "Descrição", name: "desc", widget: "text", required: false}
+              - {label: "Categoria", name: "category", widget: "select", options: ["ceramica", "resina"], default: "ceramica"}
+              - {label: "WhatsApp Link", name: "whatsapp", widget: "string"}
